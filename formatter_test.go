@@ -533,6 +533,59 @@ func TestFormatter_FailureErrors(t *testing.T) {
 	}
 }
 
+func TestFormatter_FailureContext(t *testing.T) {
+	var mErr *mockError
+	var mErrPtr error = mErr
+
+	assert.Nil(t, mErrPtr)
+	assert.NotEqual(t, nil, mErrPtr)
+
+	ac := &AssertionContext{
+		TestName:    "AssertContext name",
+		RequestName: "AssertContext request name",
+		Path:        []string{"path"},
+		AliasedPath: []string{"aliased path"},
+	}
+
+	t.Run("disable names", func(t *testing.T) {
+		fl := &AssertionFailure{
+			Errors: []error{},
+		}
+		df := &DefaultFormatter{
+			DisableNames: true,
+		}
+		fd := df.buildFormatData(ac, fl)
+
+		assert.Equal(t, "", fd.TestName)
+		assert.Equal(t, "", fd.RequestName)
+	})
+
+	t.Run("disable paths", func(t *testing.T) {
+		fl := &AssertionFailure{
+			Errors: []error{},
+		}
+		df := &DefaultFormatter{
+			DisablePaths: true,
+		}
+		efd := &FormatData{}
+
+		fd := df.buildFormatData(ac, fl)
+		assert.Equal(t, efd.AssertPath, fd.AssertPath)
+	})
+	t.Run("disable aliases", func(t *testing.T) {
+		fl := &AssertionFailure{
+			Errors: []error{},
+		}
+		df := &DefaultFormatter{
+			DisableAliases: true,
+			DisablePaths:   false,
+		}
+
+		fd := df.buildFormatData(ac, fl)
+		assert.Equal(t, ac.Path, fd.AssertPath)
+	})
+}
+
 func TestFormatter_FloatFormat(t *testing.T) {
 	cases := []struct {
 		name     string
