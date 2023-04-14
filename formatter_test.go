@@ -534,11 +534,6 @@ func TestFormatter_FailureErrors(t *testing.T) {
 }
 
 func TestFormatter_FailureContext(t *testing.T) {
-	var mErr *mockError
-	var mErrPtr error = mErr
-
-	assert.Nil(t, mErrPtr)
-	assert.NotEqual(t, nil, mErrPtr)
 
 	ac := &AssertionContext{
 		TestName:    "AssertContext name",
